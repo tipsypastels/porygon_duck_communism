@@ -1,4 +1,7 @@
+import { rest } from "../rest.ts";
+import { Routes } from "discord-api-types";
 import { Command } from "./mod.ts";
+import { BOT_TOKEN } from "../env.ts";
 
 const CACHE_FILE = new URL("../../.command-cache", import.meta.url).pathname;
 
@@ -11,6 +14,8 @@ export function addCommand(command: Command) {
 
 export async function registerCommands() {
   console.log(UNREGISTERED.length, "commands to register");
+  console.log(BOT_TOKEN);
 }
 
-export async function readPremadeCommandRegister() {}
+export async function readPremadeCommandRegister() {
+}

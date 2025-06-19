@@ -1,6 +1,7 @@
 {
   "tasks": {
     "dev": "DEV=1 deno run -A --env-file --watch main.ts",
+    "dev:register": "DEV=1 deno run -A --env-file scripts/register.ts",
     "register": "deno run -A scripts/register.ts"
   },
   "imports": {
