@@ -5,11 +5,10 @@ import { CommandParams } from "./mod.ts";
 import { Embed } from "../discord/embed.ts";
 import { UsageError } from "./error.ts";
 
+// TODO: once deploy supports otel refactor this and also add a ping to /ping
 export async function runCommand(
   interaction: Discord.APIApplicationCommandInteraction,
 ): Promise<Discord.APIInteractionResponse> {
-  performance.mark("runCommandStart");
-
   httpAssert(
     interaction.data.type === Discord.ApplicationCommandType.ChatInput,
     { code: 400, message: "unsupported command type" },
@@ -34,8 +33,6 @@ export async function runCommand(
   const commandName = interaction.data.name;
 
   let data: Discord.APIInteractionResponseCallbackData;
-
-  performance.mark("runningCommand");
 
   try {
     await command(params);

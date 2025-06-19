@@ -1,14 +1,13 @@
 import { Command } from "../server/command/mod.ts";
 
-const ping: Command = ({ embed }) => {
-  const { duration } = performance.measure(
-    "pingMeasureDuration",
-    "interactionReceived",
-    "runningCommand",
-  );
+const ping: Command = ({ embed, setEphemeral }) => {
+  setEphemeral();
 
-  console.log(duration);
-  embed.title("Pong!");
+  embed
+    .face("speech.png")
+    .color("info")
+    .title(":sparkles: Pong! Porygon is online~")
+    .description("_beep boop_ How are you today?");
 };
 
 ping.register = (cmd) => {
