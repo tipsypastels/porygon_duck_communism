@@ -43,6 +43,10 @@ export class Embed {
     return this;
   }
 
+  footer(footer: string) {
+    this.#set("footer", { text: footer });
+  }
+
   face(name: AssetGroupName<typeof FACES>) {
     this.#set("thumbnail", { url: FACES.get(name).url });
   }
