@@ -1,4 +1,4 @@
-import * as Discord from "discord.js";
+import * as Discord from "discord-api-types";
 import { Hono } from "hono";
 import { serveStatic } from "hono/deno";
 import { HTTPException } from "hono/http-exception";
