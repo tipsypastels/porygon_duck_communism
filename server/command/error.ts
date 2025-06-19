@@ -2,14 +2,12 @@ import { Embed, IntoEmbedFn } from "../discord/embed.ts";
 
 const FRIEND: unique symbol = Symbol();
 
-type LateArgs = [commandName: string];
-
 export class UsageError {
   constructor(
     _: typeof FRIEND,
     readonly code: string,
     readonly ephemeral: boolean,
-    readonly intoEmbed: IntoEmbedFn<LateArgs>,
+    readonly intoEmbed: IntoEmbedFn<[commandName: string]>,
   ) {}
 }
 
