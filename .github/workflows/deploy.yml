@@ -27,11 +27,6 @@ jobs:
         with:
           deno-version: v2.x
 
-      - name: Test
-        run: |
-          echo "discord_guild_id: $DISCORD_GUILD_ID"
-          echo "discord_public_key: $DISCORD_PUBLIC_KEY"
-
       # - name: Build step
       #   run: "deno task build"
 
