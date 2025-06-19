@@ -2,9 +2,11 @@ import { Command } from "../server/command/mod.ts";
 
 const ping: Command = ({ embed }) => {
   const { duration } = performance.measure(
+    "pingMeasureDuration",
     "interactionReceived",
     "runningCommand",
   );
+
   console.log(duration);
   embed.title("Pong!");
 };
