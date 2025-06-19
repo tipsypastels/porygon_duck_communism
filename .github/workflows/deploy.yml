@@ -6,8 +6,8 @@ on:
     branches: main
 
 env:
-  DISCORD_GUILD_ID: ${{ vars.DISCORD_GUILD_ID }}
-  DISCORD_PUBLIC_KEY: ${{ vars.DISCORD_PUBLIC_KEY }}
+  DISCORD_GUILD_ID: "322199235825238017"
+  DISCORD_PUBLIC_KEY: "5f93e0de0ee22d7aff619053d12d2ee0c8b93936aec3401f96b82d02e20d5fc3"
 
 jobs:
   deploy:
