@@ -1,6 +1,6 @@
 import { addAllCommands } from "../commands/mod.ts";
 import {
-  readPremadeCommandRegister,
+  hydrateCommands,
   registerCommands,
 } from "../server/command/registrar.ts";
 import { DEV } from "../server/env.ts";
@@ -11,7 +11,7 @@ addAllCommands();
 if (DEV) {
   await registerCommands();
 } else {
-  await readPremadeCommandRegister();
+  await hydrateCommands();
 }
 
 Deno.serve(hono.fetch);
