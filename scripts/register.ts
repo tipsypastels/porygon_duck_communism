@@ -1,5 +1,5 @@
 import { addAllCommands } from "../commands/mod.ts";
-import { registerCommands } from "../server/command/registrar.ts";
+import { registrar } from "../server/command/registrar.ts";
 
 addAllCommands();
-await registerCommands();
+await registrar.register({ writeManifest: true });

@@ -10,6 +10,12 @@ export interface CommandParams {
 }
 
 export class CommandDataBuilder {
+  static register(command: Command) {
+    const builder = new this(command.name);
+    command.register(builder);
+    return builder;
+  }
+
   #name: string;
   #description?: string;
 
@@ -44,9 +50,4 @@ export class CommandDataBuilder {
     assert(value, `Command ${this.#name} is missing ${key}`);
     return value;
   }
-}
-
-export interface CommandCell {
-  command: Command;
-  data: { id: string; name: string };
 }

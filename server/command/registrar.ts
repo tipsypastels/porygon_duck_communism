@@ -1,72 +1,96 @@
 import { assert } from "@std/assert";
 import { putApplicationGuildCommands } from "../rest.ts";
-import { Command, CommandCell, CommandDataBuilder } from "./mod.ts";
+import { Command, CommandDataBuilder } from "./mod.ts";
 import * as Discord from "discord-api-types";
 
-const CACHE_FILE = new URL("../../.command-cache", import.meta.url).pathname;
+type Manifest = Record<string, string>;
+type CommandPostData = Discord.RESTPostAPIApplicationCommandsJSONBody;
 
-const REGISTERED_BY_NAME = new Map<string, CommandCell>();
-const REGISTERED_BY_ID = new Map<string, CommandCell>();
-const REGISTERED_BY_COMMAND = new Map<Command, CommandCell>();
+const MANIFEST_FILE = new URL("../../.commands", import.meta.url).pathname;
 
-const UNREGISTERED: Command[] = [];
+class Registrar {
+  #unregistered = new UnregisteredList();
+  #registered = new RegisteredList();
 
-export function addCommand(command: Command) {
-  UNREGISTERED.push(command);
-}
-
-export async function registerCommands() {
-  const commandRegData: Discord.RESTPostAPIApplicationCommandsJSONBody[] = [];
-  const commandsToRegister = takeUnregistered();
-
-  for (const command of commandsToRegister) {
-    const builder = new CommandDataBuilder(command.name);
-    command.register(builder);
-    commandRegData.push(builder.build());
+  add(command: Command) {
+    this.#unregistered.add(command);
+    return this;
   }
 
-  const responseData = await putApplicationGuildCommands(commandRegData);
-  const cacheFileJson: Record<string, string> = {};
+  async register({ writeManifest }: { writeManifest: boolean }) {
+    const postData: CommandPostData[] = [];
+    const unregistered = this.#unregistered.take();
 
-  for (let i = 0; i < responseData.length; i++) {
-    // assumes that the output is in order
-    const command = commandsToRegister[i];
-    const commandResponseData = responseData[i];
-    const cell: CommandCell = { command, data: commandResponseData };
+    for (const command of unregistered) {
+      postData.push(CommandDataBuilder.register(command).build());
+    }
 
-    cacheFileJson[commandResponseData.name] = commandResponseData.id;
-    setRegistered(cell);
+    const responseData = await putApplicationGuildCommands(postData);
+    const manifest: Manifest = {};
+
+    for (let i = 0; i < responseData.length; i++) {
+      // assumes that the output is in order
+      const command = unregistered[i];
+      const commandResponseData = responseData[i];
+      const cell: Cell = { command, data: commandResponseData };
+
+      manifest[cell.data.name] = cell.data.id;
+      this.#registered.add(cell);
+
+      console.log("Registered command", cell.data.name);
+    }
+
+    if (writeManifest) {
+      await Deno.writeTextFile(MANIFEST_FILE, JSON.stringify(manifest));
+    }
   }
 
-  await Deno.writeTextFile(CACHE_FILE, JSON.stringify(cacheFileJson));
+  async hydrate() {
+    const manifestRaw = await Deno.readTextFile(MANIFEST_FILE);
+    const manifest: Manifest = JSON.parse(manifestRaw);
+    const unregistered = this.#unregistered.take();
+
+    for (const command of unregistered) {
+      const name = CommandDataBuilder.register(command).getName();
+      const id: string | undefined = manifest[name];
+
+      assert(id, `Command '${name}' not found for hydration`);
+      this.#registered.add({ command, data: { id, name } });
+
+      console.log("Hydrated command", name);
+    }
+  }
 }
 
-export async function hydrateCommands() {
-  const cacheFileText = await Deno.readTextFile(CACHE_FILE);
-  const cacheFileJson: Record<string, string> = JSON.parse(cacheFileText);
-  const commandsToHydrate = takeUnregistered();
+class UnregisteredList {
+  #list: Command[] = [];
 
-  for (const command of commandsToHydrate) {
-    const builder = new CommandDataBuilder(command.name);
-    command.register(builder);
-    const name = builder.getName();
-    const id: string | undefined = cacheFileJson[name];
-
-    assert(id, `Command '${name}' not found for hydration`);
-    setRegistered({ command, data: { id, name } });
+  add(command: Command) {
+    this.#list.push(command);
   }
 
-  console.log(REGISTERED_BY_COMMAND);
+  take() {
+    const out = this.#list;
+    this.#list = [];
+    return out;
+  }
 }
 
-function setRegistered(cell: CommandCell) {
-  REGISTERED_BY_NAME.set(cell.data.name, cell);
-  REGISTERED_BY_ID.set(cell.data.id, cell);
-  REGISTERED_BY_COMMAND.set(cell.command, cell);
+class RegisteredList {
+  #byId = new Map<string, Cell>();
+  #byName = new Map<string, Cell>();
+  #byCommand = new Map<Command, Cell>();
+
+  add(cell: Cell) {
+    this.#byId.set(cell.data.id, cell);
+    this.#byName.set(cell.data.name, cell);
+    this.#byCommand.set(cell.command, cell);
+  }
 }
 
-function takeUnregistered(): Command[] {
-  const out = [...UNREGISTERED];
-  UNREGISTERED.length = 0;
-  return out;
+interface Cell {
+  command: Command;
+  data: { id: string; name: string };
 }
+
+export const registrar = new Registrar();
