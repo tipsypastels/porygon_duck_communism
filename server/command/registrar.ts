@@ -13,8 +13,6 @@ export function addCommand(command: Command) {
 }
 
 export async function registerCommands() {
-  console.log(UNREGISTERED.length, "commands to register");
-  console.log(BOT_TOKEN);
 }
 
 export async function readPremadeCommandRegister() {
