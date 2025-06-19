@@ -15,11 +15,17 @@ export const hono = new Hono()
       const timestamp = ctx.req.header("X-Signature-Timestamp") ?? "";
       const body = await ctx.req.text();
 
-      const valid = nacl.sign.detached.verify(
-        Buffer.from(timestamp + body),
-        Buffer.from(signature, "hex"),
-        Buffer.from(PUBLIC_KEY, "hex"),
-      );
+      let valid: boolean;
+
+      try {
+        valid = nacl.sign.detached.verify(
+          Buffer.from(timestamp + body),
+          Buffer.from(signature, "hex"),
+          Buffer.from(PUBLIC_KEY, "hex"),
+        );
+      } catch {
+        valid = false;
+      }
 
       if (!valid) {
         throw new HTTPException(401, { message: "invalid request signature" });
