@@ -8,6 +8,8 @@ import { UsageError } from "./error.ts";
 export async function runCommand(
   interaction: Discord.APIApplicationCommandInteraction,
 ): Promise<Discord.APIInteractionResponse> {
+  performance.mark("runCommandStart");
+
   httpAssert(
     interaction.data.type === Discord.ApplicationCommandType.ChatInput,
     { code: 400, message: "unsupported command type" },
@@ -33,18 +35,20 @@ export async function runCommand(
 
   let data: Discord.APIInteractionResponseCallbackData;
 
+  performance.mark("runningCommand");
+
   try {
     await command(params);
 
     console.log(
-      `command '${commandName}' used by '${member.user.username}'`,
+      `Command '${commandName}' used by ${member.user.username}`,
     );
 
     data = { flags, embeds: [embed.build()] };
   } catch (error) {
     if (error instanceof UsageError) {
       console.warn(
-        `command '${commandName}' got error '${error.code}' when used by '${member.user.username}'`,
+        `command '${commandName}' got error ${error.code} when used by ${member.user.username}`,
       );
 
       const flags = error.ephemeral
@@ -59,7 +63,7 @@ export async function runCommand(
       };
     } else {
       console.error(
-        `command '${commandName} crashed when used by '${member.user.username}'`,
+        `command '${commandName} crashed when used by ${member.user.username}`,
       );
 
       data = {

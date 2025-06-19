@@ -20,6 +20,7 @@ export class Embed {
   #set<K extends keyof Discord.APIEmbed>(key: K, value: Discord.APIEmbed[K]) {
     this.#inner[key] = value;
     this.#touched = true;
+    return this;
   }
 
   get touched() {
@@ -34,24 +35,37 @@ export class Embed {
   }
 
   title(title: string) {
-    this.#set("title", title);
-    return this;
+    return this.#set("title", title);
   }
 
   description(description: string) {
-    this.#set("description", description);
-    return this;
+    return this.#set("description", description);
+  }
+
+  color(color: keyof typeof STANDARD_COLORS | number) {
+    return this.#set(
+      "color",
+      typeof color === "string" ? STANDARD_COLORS[color] : color,
+    );
   }
 
   footer(footer: string) {
-    this.#set("footer", { text: footer });
+    return this.#set("footer", { text: footer });
   }
 
   face(name: AssetGroupName<typeof FACES>) {
-    this.#set("thumbnail", { url: FACES.get(name).url });
+    return this.#set("thumbnail", { url: FACES.get(name).url });
   }
 
   build() {
     return this.#inner;
   }
 }
+
+const STANDARD_COLORS = {
+  ok: 0x7fc13a,
+  info: 0x00c17d,
+  error: 0xff0041,
+  danger: 0xff8931,
+  warning: 0xfdbe4a,
+};

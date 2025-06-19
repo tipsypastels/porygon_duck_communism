@@ -35,6 +35,8 @@ export const hono = new Hono()
       return next();
     },
     async (ctx) => {
+      performance.mark("interactionReceived");
+
       const interaction: Discord.APIInteraction = await ctx.req.json();
 
       if (interaction.type === Discord.InteractionType.Ping) {

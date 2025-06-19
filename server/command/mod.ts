@@ -3,7 +3,7 @@ import * as Discord from "discord-api-types";
 import { Embed } from "../discord/embed.ts";
 
 export interface Command {
-  (params: CommandParams): Promise<void>;
+  (params: CommandParams): void | Promise<void>;
   register(builder: CommandDataBuilder): void;
 }
 

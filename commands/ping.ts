@@ -1,6 +1,11 @@
 import { Command } from "../server/command/mod.ts";
 
-const ping: Command = async ({ embed }) => {
+const ping: Command = ({ embed }) => {
+  const { duration } = performance.measure(
+    "interactionReceived",
+    "runningCommand",
+  );
+  console.log(duration);
   embed.title("Pong!");
 };
 
