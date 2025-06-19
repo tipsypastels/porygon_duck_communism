@@ -1,6 +1,7 @@
 {
   "tasks": {
-    "dev": "DEV=1 deno run -A --env-file --watch main.ts"
+    "dev": "DEV=1 deno run -A --env-file --watch main.ts",
+    "register": "deno run -A scripts/register.ts"
   },
   "imports": {
     "@discordjs/rest": "npm:@discordjs/rest@^2.5.1",

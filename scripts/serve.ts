@@ -1,6 +1,15 @@
 import "../commands/mod.ts";
-import { registrar } from "../server/command/registrar.ts";
+import {
+  readPremadeCommandRegister,
+  registerCommands,
+} from "../server/command/registrar.ts";
+import { DEV } from "../server/env.ts";
 import { hono } from "../server/mod.ts";
 
-registrar;
+if (DEV) {
+  await registerCommands();
+} else {
+  await readPremadeCommandRegister();
+}
+
 Deno.serve(hono.fetch);

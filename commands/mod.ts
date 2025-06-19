@@ -1,4 +1,4 @@
-import { registrar } from "../server/command/registrar.ts";
+import { addCommand } from "../server/command/registrar.ts";
 import ping from "./ping.ts";
 
-registrar.add(ping);
+addCommand(ping);

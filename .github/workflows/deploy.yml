@@ -27,8 +27,8 @@ jobs:
         with:
           deno-version: v2.x
 
-      # - name: Build step
-      #   run: "deno task build"
+      - name: Register commands
+        run: "deno task register"
 
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
