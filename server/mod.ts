@@ -47,6 +47,7 @@ export const hono = new Hono()
 
       if (interaction.type === Discord.InteractionType.ApplicationCommand) {
         const response = await runCommand(interaction);
+        console.log(response);
         return ctx.json(response);
       }
 
