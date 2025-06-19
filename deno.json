@@ -1,5 +1,6 @@
 {
   "tasks": {
+    "dev": "DEV=1 deno run -A --env-file --watch main.ts"
   },
   "imports": {
     "@std/assert": "jsr:@std/assert@^1.0.13",
