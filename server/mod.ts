@@ -4,6 +4,7 @@ import { serveStatic } from "hono/deno";
 import { HTTPException } from "hono/http-exception";
 import { Buffer } from "node:buffer";
 import nacl from "tweetnacl";
+import { runCommand } from "./command/runner.ts";
 import { PUBLIC_KEY } from "./env.ts";
 
 export const hono = new Hono()
@@ -45,14 +46,8 @@ export const hono = new Hono()
       }
 
       if (interaction.type === Discord.InteractionType.ApplicationCommand) {
-        return ctx.json(
-          {
-            type: Discord.InteractionResponseType.ChannelMessageWithSource,
-            data: {
-              content: "Hello, world!",
-            },
-          } satisfies Discord.APIInteractionResponse,
-        );
+        const response = await runCommand(interaction);
+        return ctx.json(response);
       }
 
       throw new HTTPException(400, { message: "bad request" });

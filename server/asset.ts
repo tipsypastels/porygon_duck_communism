@@ -1,5 +1,5 @@
 import { join } from "@std/path";
-import { getPublicOrInternalUrl } from "./public.ts";
+import { getPublicUrl } from "./public.ts";
 
 export type AssetGroupName<AG> = AG extends AssetGroup<infer N> ? N[number]
   : never;
@@ -26,7 +26,7 @@ export class Asset {
   }
 
   get url() {
-    return join(getPublicOrInternalUrl(), "assets", this.#path);
+    return join(getPublicUrl(), "assets", this.#path);
   }
 }
 

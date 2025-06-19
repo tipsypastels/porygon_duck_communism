@@ -1,6 +1,6 @@
 import { unwrap } from "$util/unwrap.ts";
 import * as Discord from "discord-api-types";
-import { putApplicationGuildCommands } from "../rest.ts";
+import { putApplicationGuildCommands } from "../discord/rest.ts";
 import { Command, CommandDataBuilder } from "./mod.ts";
 
 type Manifest = Record<string, string>;
@@ -11,6 +11,10 @@ const MANIFEST_FILE = new URL("../../.commands", import.meta.url).pathname;
 class Registrar {
   #unregistered = new UnregisteredList();
   #registered = new RegisteredList();
+
+  getById(id: string) {
+    return this.#registered.byId.get(id)?.command;
+  }
 
   add(command: Command) {
     this.#unregistered.add(command);
@@ -76,14 +80,14 @@ class UnregisteredList {
 }
 
 class RegisteredList {
-  #byId = new Map<string, Cell>();
-  #byName = new Map<string, Cell>();
-  #byCommand = new Map<Command, Cell>();
+  byId = new Map<string, Cell>();
+  byName = new Map<string, Cell>();
+  byCommand = new Map<Command, Cell>();
 
   add(cell: Cell) {
-    this.#byId.set(cell.data.id, cell);
-    this.#byName.set(cell.data.name, cell);
-    this.#byCommand.set(cell.command, cell);
+    this.byId.set(cell.data.id, cell);
+    this.byName.set(cell.data.name, cell);
+    this.byCommand.set(cell.command, cell);
   }
 }
 

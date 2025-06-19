@@ -1,5 +1,6 @@
 import { unwrap } from "$util/unwrap.ts";
 import * as Discord from "discord-api-types";
+import { Embed } from "../discord/embed.ts";
 
 export interface Command {
   (params: CommandParams): Promise<void>;
@@ -7,6 +8,9 @@ export interface Command {
 }
 
 export interface CommandParams {
+  embed: Embed;
+  member: Discord.APIGuildMember;
+  setEphemeral(): void;
 }
 
 export class CommandDataBuilder {

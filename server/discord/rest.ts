@@ -1,7 +1,7 @@
 import * as D from "discord-api-types";
 import { Routes as R } from "discord-api-types";
 import { REST } from "@discordjs/rest";
-import { BOT_ID, BOT_TOKEN, GUILD_ID } from "./env.ts";
+import { BOT_ID, BOT_TOKEN, GUILD_ID } from "../env.ts";
 
 const rest = new REST().setToken(BOT_TOKEN);
 
