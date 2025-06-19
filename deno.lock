@@ -4,6 +4,7 @@
     "jsr:@hono/hono@^4.8.0": "4.8.0",
     "jsr:@std/assert@^1.0.13": "1.0.13",
     "jsr:@std/internal@^1.0.6": "1.0.6",
+    "jsr:@std/path@^1.1.0": "1.1.0",
     "npm:@discordjs/rest@^2.5.1": "2.5.1",
     "npm:@types/node@^24.0.3": "24.0.3",
     "npm:discord-api-types@~0.38.12": "0.38.12",
@@ -21,6 +22,9 @@
     },
     "@std/internal@1.0.6": {
       "integrity": "9533b128f230f73bd209408bb07a4b12f8d4255ab2a4d22a1fd6d87304aca9a4"
+    },
+    "@std/path@1.1.0": {
+      "integrity": "ddc94f8e3c275627281cbc23341df6b8bcc874d70374f75fec2533521e3d6886"
     }
   },
   "npm": {
@@ -82,6 +86,7 @@
     "dependencies": [
       "jsr:@hono/hono@^4.8.0",
       "jsr:@std/assert@^1.0.13",
+      "jsr:@std/path@^1.1.0",
       "npm:@discordjs/rest@^2.5.1",
       "npm:@types/node@^24.0.3",
       "npm:discord-api-types@~0.38.12",
