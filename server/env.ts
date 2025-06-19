@@ -7,7 +7,6 @@ export const PUBLIC_KEY = required("DISCORD_PUBLIC_KEY");
 
 function required(name: string) {
   const value = Deno.env.get(name);
-  console.log(value);
   assert(value, `Missing env var '${name}'`);
   return value;
 }
