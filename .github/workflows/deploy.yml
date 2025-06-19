@@ -29,6 +29,8 @@ jobs:
 
       - name: Register commands
         run: "deno task register"
+        env:
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
 
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
