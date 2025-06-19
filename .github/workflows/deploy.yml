@@ -5,6 +5,10 @@ on:
   pull_request:
     branches: main
 
+env:
+  DISCORD_GUILD_ID: ${{ vars.DISCORD_GUILD_ID }}
+  DISCORD_PUBLIC_KEY: ${{ vars.DISCORD_PUBLIC_KEY }}
+
 jobs:
   deploy:
     name: Deploy
