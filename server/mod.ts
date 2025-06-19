@@ -1,10 +1,10 @@
+import * as Discord from "discord.js";
 import { Hono } from "hono";
 import { serveStatic } from "hono/deno";
 import { HTTPException } from "hono/http-exception";
 import { Buffer } from "node:buffer";
 import nacl from "tweetnacl";
 import { PUBLIC_KEY } from "./env.ts";
-import { APIInteraction, InteractionType } from "discord.js";
 
 export const hono = new Hono()
   .use(serveStatic({ root: "public" }))
@@ -28,6 +28,27 @@ export const hono = new Hono()
       return next();
     },
     async (ctx) => {
-      const json: APIInteraction = await ctx.req.json();
+      const interaction: Discord.APIInteraction = await ctx.req.json();
+
+      if (interaction.type === Discord.InteractionType.Ping) {
+        return ctx.json(
+          {
+            type: Discord.InteractionResponseType.Pong,
+          } satisfies Discord.APIInteractionResponse,
+        );
+      }
+
+      if (interaction.type === Discord.InteractionType.ApplicationCommand) {
+        return ctx.json(
+          {
+            type: Discord.InteractionResponseType.ChannelMessageWithSource,
+            data: {
+              content: "Hello, world!",
+            },
+          } satisfies Discord.APIInteractionResponse,
+        );
+      }
+
+      throw new HTTPException(400, { message: "bad request" });
     },
   );
