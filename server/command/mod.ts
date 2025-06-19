@@ -1,5 +1,5 @@
+import { unwrap } from "$util/unwrap.ts";
 import * as Discord from "discord-api-types";
-import { assert } from "@std/assert";
 
 export interface Command {
   (params: CommandParams): Promise<void>;
@@ -46,8 +46,6 @@ export class CommandDataBuilder {
   }
 
   #required<T>(f: () => T | undefined, key: string): T {
-    const value = f();
-    assert(value, `Command ${this.#name} is missing ${key}`);
-    return value;
+    return unwrap(f(), `Command '${this.#name}' is missing '${key}'`);
   }
 }

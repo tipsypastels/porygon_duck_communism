@@ -1,14 +1,21 @@
+import { unwrap } from "$util/unwrap.ts";
 import { assert } from "@std/assert";
-import { PUBLIC_URL } from "./env.ts";
+import { DEV } from "./env.ts";
 
-let internalUrl: string | undefined;
+let publicUrl = Deno.env.get("PUBLIC_URL");
 
-export function setInternalUrl(url: string) {
-  internalUrl = url;
+assert(DEV || publicUrl, "Missing env var 'PUBLIC_URL'");
+
+if (publicUrl) {
+  console.log("Public URL", publicUrl);
 }
 
-export function getPublicOrInternalUrl() {
-  const url = PUBLIC_URL || internalUrl;
-  assert(url, `No public or internal URL, is the server running?`);
-  return url;
+export function setDevPublicUrl(url: string) {
+  if (DEV) {
+    publicUrl = url;
+  }
+}
+
+export function getPublicUrl() {
+  return unwrap(publicUrl, "No public URL, is the server running?");
 }

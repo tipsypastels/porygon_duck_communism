@@ -1,7 +1,7 @@
-import { assert } from "@std/assert";
+import { unwrap } from "$util/unwrap.ts";
+import * as Discord from "discord-api-types";
 import { putApplicationGuildCommands } from "../rest.ts";
 import { Command, CommandDataBuilder } from "./mod.ts";
-import * as Discord from "discord-api-types";
 
 type Manifest = Record<string, string>;
 type CommandPostData = Discord.RESTPostAPIApplicationCommandsJSONBody;
@@ -52,9 +52,8 @@ class Registrar {
 
     for (const command of unregistered) {
       const name = CommandDataBuilder.register(command).getName();
-      const id: string | undefined = manifest[name];
+      const id = unwrap(manifest[name], `Command '${name}' not in manifest`);
 
-      assert(id, `Command '${name}' not found for hydration`);
       this.#registered.add({ command, data: { id, name } });
 
       console.log("Hydrated command", name);

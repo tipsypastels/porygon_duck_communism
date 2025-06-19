@@ -5,6 +5,7 @@
     "register": "deno run -A scripts/register.ts"
   },
   "imports": {
+    "$util/": "./util/",
     "@discordjs/rest": "npm:@discordjs/rest@^2.5.1",
     "@std/assert": "jsr:@std/assert@^1.0.13",
     "@std/path": "jsr:@std/path@^1.1.0",
