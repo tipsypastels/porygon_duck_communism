@@ -4,6 +4,7 @@ import { httpAssert, httpUnwrap } from "$util/unwrap.ts";
 import { CommandParams } from "./mod.ts";
 import { Embed } from "../discord/embed.ts";
 import { UsageError } from "./error.ts";
+import { CommandOptions } from "./options.ts";
 
 // TODO: once deploy supports otel refactor this and also add a ping to /ping
 export async function runCommand(
@@ -27,8 +28,13 @@ export async function runCommand(
   let flags = 0 as Discord.MessageFlags;
 
   const embed = new Embed();
+  const options = new CommandOptions(
+    interaction.data.options,
+    interaction.data.resolved,
+  );
+
   const setEphemeral = () => flags |= Discord.MessageFlags.Ephemeral;
-  const params: CommandParams = { embed, member, setEphemeral };
+  const params: CommandParams = { embed, options, member, setEphemeral };
 
   const commandName = interaction.data.name;
 

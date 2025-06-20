@@ -4,8 +4,8 @@ import {
   Subcommand,
 } from "../server/command/mod.ts";
 
-const hello: Subcommand = ({ embed }) => {
-  embed.title("hello");
+const hello: Subcommand = ({ embed, options }) => {
+  embed.title("hello").description(options.toString());
 };
 
 hello.regData = {
@@ -13,8 +13,8 @@ hello.regData = {
   description: "hello",
 };
 
-const goodbye: Subcommand = ({ embed }) => {
-  embed.title("goodbye");
+const goodbye: Subcommand = ({ embed, options }) => {
+  embed.title("goodbye").description(options.toString());
 };
 
 goodbye.regData = {

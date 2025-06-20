@@ -1,5 +1,6 @@
 import * as Discord from "discord-api-types";
 import { Embed } from "../discord/embed.ts";
+import { CommandOptions } from "./options.ts";
 
 export type CommandFn = (params: CommandParams) => void | Promise<void>;
 export type CommandRegData =
@@ -22,6 +23,7 @@ export interface Subcommand extends CommandFn {
 
 export interface CommandParams {
   embed: Embed;
+  options: CommandOptions;
   member: Discord.APIGuildMember;
   setEphemeral(): void;
 }
@@ -30,8 +32,14 @@ export function fromSubcommands(
   subcommands: Record<string, Subcommand>,
   regData: Omit<CommandRegData, "options">,
 ) {
-  const command: Command = ({ embed }) => {
-    embed.title("temp");
+  const command: Command = ({ options, ...otherParams }) => {
+    const subcommandInfo = options.getSubcommandInfo();
+    const subcommand = subcommands[subcommandInfo.name];
+
+    return subcommand({
+      options: subcommandInfo.options,
+      ...otherParams,
+    });
   };
 
   command.regData = {
