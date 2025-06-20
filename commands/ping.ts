@@ -1,7 +1,7 @@
 import { Command } from "../server/command/mod.ts";
 
 const ping: Command = ({ embed, setEphemeral }) => {
-  setEphemeral();
+  // setEphemeral();
 
   embed
     .face("speech.png")
