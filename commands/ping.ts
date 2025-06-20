@@ -1,9 +1,10 @@
+import { asset } from "../server/asset.ts";
 import { Command } from "../server/command/mod.ts";
 
 const ping: Command = ({ embed, setEphemeral }) => {
   setEphemeral();
   embed
-    .thumbnail("http://porygon.deno.dev/porygon.png")
+    .thumbnail(asset("faces/speech.png"))
     .color("info")
     .title(":sparkles: Pong! Porygon is online~")
     .description("_beep boop_ How are you today?");
