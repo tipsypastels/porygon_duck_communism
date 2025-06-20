@@ -7,14 +7,14 @@ export const pory: Command = async ({ embed, options }) => {
   const input = options.tryString("input");
   const output = markov.read();
 
-  embed.color("info").title("Porygon Talk Show");
+  embed.face("speech.png").color("info").title("Porygon Talk Show");
 
   if (input) {
     embed.field("Input", codeBlock(input));
     await markov.write(input);
   }
 
-  embed.field("Output", output);
+  embed.field("Output", codeBlock(output));
 };
 
 pory.regData = {
