@@ -9,6 +9,10 @@ import { PUBLIC_KEY } from "./env.ts";
 
 export const hono = new Hono()
   .use(serveStatic({ root: "public" }))
+  .use(async (ctx, next) => {
+    await next();
+    console.log(ctx.res);
+  })
   .post(
     "/send",
     async (ctx, next) => {
