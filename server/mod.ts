@@ -37,22 +37,26 @@ export const hono = new Hono()
     async (ctx) => {
       const interaction: Discord.APIInteraction = await ctx.req.json();
 
+      console.log("Received interaction", interaction);
+
+      const respond = (response: Discord.APIInteractionResponse) => {
+        console.log("Responding to interaction", response);
+        return ctx.json(response);
+      };
+
       if (interaction.type === Discord.InteractionType.Ping) {
-        return ctx.json(
-          {
-            type: Discord.InteractionResponseType.Pong,
-          } satisfies Discord.APIInteractionResponse,
-        );
+        return respond({
+          type: Discord.InteractionResponseType.Pong,
+        });
       }
 
       if (interaction.type === Discord.InteractionType.ApplicationCommand) {
         try {
           const response = await runCommand(interaction);
-          console.log(response);
-          return ctx.json(response);
+          return respond(response);
         } catch (e) {
           console.log("Error", e);
-          return ctx.json({ type: 4, data: { content: "ooops" } });
+          return respond({ type: 4, data: { content: "ooops" } });
         }
       }
 
