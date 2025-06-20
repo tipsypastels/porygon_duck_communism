@@ -37,7 +37,7 @@ export class CommandOptions {
   }
 
   #tryGetTyped<const T extends CommandOptionType>(name: string, type: T) {
-    const option = this.#get(name);
+    const option = this.#tryGet(name);
     if (option) return this.#cast(name, type, option);
   }
 
