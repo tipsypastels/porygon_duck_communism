@@ -4,8 +4,10 @@ import { join } from "@std/path";
 // even when the interaction response is instant. My guess is that it sees that the images are being served
 // from the same domain as the interaction endpoint and tries to block on loading them instead of doing it
 // lazily, and Deploy isn't the fastest at serving static assets.
+//
+// BUT using the raw.githubusercontent url also does the same thing so ????
 const BASE_URL =
-  "https://raw.githubusercontent.com/tipsypastels/porygon_duck_communism/refs/heads/main/assets";
+  "https://github.com/tipsypastels/porygon_duck_communism/blob/main/assets";
 
 export type AssetGroupName<AG> = AG extends AssetGroup<infer N> ? N[number]
   : never;
@@ -32,7 +34,7 @@ export class Asset {
   }
 
   get url() {
-    return join(BASE_URL, this.#path);
+    return join(BASE_URL, `${this.#path}?raw=true`);
   }
 }
 
