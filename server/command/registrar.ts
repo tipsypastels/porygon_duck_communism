@@ -1,10 +1,8 @@
 import { unwrap } from "$util/unwrap.ts";
-import * as Discord from "discord-api-types";
 import { putApplicationGuildCommands } from "../discord/rest.ts";
-import { Command, CommandDataBuilder } from "./mod.ts";
+import { Command, CommandRegData } from "./mod.ts";
 
 type Manifest = Record<string, string>;
-type CommandPostData = Discord.RESTPostAPIApplicationCommandsJSONBody;
 
 const MANIFEST_FILE = new URL("../../.commands", import.meta.url).pathname;
 
@@ -22,14 +20,14 @@ class Registrar {
   }
 
   async register({ writeManifest }: { writeManifest: boolean }) {
-    const postData: CommandPostData[] = [];
+    const regData: CommandRegData[] = [];
     const unregistered = this.#unregistered.take();
 
     for (const command of unregistered) {
-      postData.push(CommandDataBuilder.register(command).build());
+      regData.push(command.regData);
     }
 
-    const responseData = await putApplicationGuildCommands(postData);
+    const responseData = await putApplicationGuildCommands(regData);
     const manifest: Manifest = {};
 
     for (let i = 0; i < responseData.length; i++) {
@@ -55,7 +53,7 @@ class Registrar {
     const unregistered = this.#unregistered.take();
 
     for (const command of unregistered) {
-      const name = CommandDataBuilder.register(command).getName();
+      const { name } = command.regData;
       const id = unwrap(manifest[name], `Command '${name}' not in manifest`);
 
       this.#registered.add({ command, data: { id, name } });

@@ -9,8 +9,9 @@ const ping: Command = ({ embed, setEphemeral }) => {
     .description("_beep boop_ How are you today?");
 };
 
-ping.register = (cmd) => {
-  cmd.description("Pings the bot.");
+ping.regData = {
+  name: "ping",
+  description: "Pings the bot.",
 };
 
 export default ping;
