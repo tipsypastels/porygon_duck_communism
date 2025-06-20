@@ -1,4 +1,5 @@
 import * as Discord from "discord-api-types";
+import { FACES } from "../asset.ts";
 
 export type IntoEmbed<P extends unknown[] = []> =
   | IntoEmbedFn<P>
@@ -50,6 +51,10 @@ export class Embed {
 
   footer(footer: string) {
     return this.#set("footer", { text: footer });
+  }
+
+  face(name: keyof typeof FACES) {
+    return this.thumbnail(FACES[name]);
   }
 
   thumbnail(url: string) {
