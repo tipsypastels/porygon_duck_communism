@@ -19,7 +19,7 @@ export default ping;
 
 const oops = usageError("oops", (e) => {
   e
-    .face("speech.png")
+    // .face("speech.png")
     .color("info")
     .title(":sparkles: Pong! Porygon is online~")
     .description("_beep boop_ How are you today?");
