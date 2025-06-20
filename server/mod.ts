@@ -46,9 +46,14 @@ export const hono = new Hono()
       }
 
       if (interaction.type === Discord.InteractionType.ApplicationCommand) {
-        const response = await runCommand(interaction);
-        console.log(response);
-        return ctx.json(response);
+        try {
+          const response = await runCommand(interaction);
+          console.log(response);
+          return ctx.json(response);
+        } catch (e) {
+          console.log("Error", e);
+          return ctx.json({ type: 4, data: { content: "ooops" } });
+        }
       }
 
       throw new HTTPException(400, { message: "bad request" });
