@@ -64,6 +64,16 @@ export class Embed {
     return this.thumbnail(FACES[name]);
   }
 
+  error(
+    name:
+      & keyof typeof STANDARD_COLORS
+      & keyof {
+        [K in keyof typeof FACES extends `${infer N}.png` ? N : never]: never;
+      },
+  ) {
+    return this.color(name).face(`${name}.png`);
+  }
+
   thumbnail(url: string) {
     return this.#set("thumbnail", { url });
   }
