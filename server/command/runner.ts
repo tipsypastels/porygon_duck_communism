@@ -66,7 +66,8 @@ export async function runCommand(
       };
     } else {
       console.error(
-        `command '${commandName} crashed when used by ${member.user.username}`,
+        `command '${commandName}' crashed when used by ${member.user.username}`,
+        error,
       );
 
       data = {
