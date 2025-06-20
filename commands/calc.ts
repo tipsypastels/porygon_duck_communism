@@ -3,7 +3,7 @@ import { Command, CommandOptionType } from "../server/command/mod.ts";
 import { codeBlock, ellipsis } from "$util/string.ts";
 import { all, create } from "mathjs";
 
-const calc: Command = async ({ embed, options }) => {
+export const calc: Command = async ({ embed, options }) => {
   const equation = options.string("equation");
   const equationTrunc = codeBlock(ellipsis(equation, 100));
 
