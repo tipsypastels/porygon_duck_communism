@@ -23,6 +23,13 @@ export class Embed {
     return this;
   }
 
+  #pushField(name: string, value: string, inline: boolean) {
+    this.#inner.fields ??= [];
+    this.#inner.fields.push({ name, value, inline });
+    this.#touched = true;
+    return this;
+  }
+
   get touched() {
     return this.#touched;
   }
@@ -59,6 +66,14 @@ export class Embed {
 
   thumbnail(url: string) {
     return this.#set("thumbnail", { url });
+  }
+
+  field(name: string, value: string) {
+    return this.#pushField(name, value, false);
+  }
+
+  fieldInline(name: string, value: string) {
+    return this.#pushField(name, value, true);
   }
 
   build() {

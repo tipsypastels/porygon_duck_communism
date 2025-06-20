@@ -1,6 +1,6 @@
 import { Command } from "../server/command/mod.ts";
 
-const ping: Command = ({ embed, setEphemeral }) => {
+export const ping: Command = ({ embed, setEphemeral }) => {
   setEphemeral();
   embed
     .face("speech.png")
@@ -13,5 +13,3 @@ ping.regData = {
   name: "ping",
   description: "Pings the bot.",
 };
-
-export default ping;

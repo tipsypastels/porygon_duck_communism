@@ -17,6 +17,8 @@ export function asset(path: string) {
 }
 
 export const FACES = assetGroup("faces", [
+  "8ball.png",
+  "angry.png",
   "danger.png",
   "error.png",
   "plead.png",
