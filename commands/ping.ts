@@ -4,7 +4,7 @@ const ping: Command = ({ embed, setEphemeral }) => {
   setEphemeral();
   embed
     .thumbnail(
-      "https:/raw.githubusercontent.com/tipsypastels/porygon_duck_communism/refs/heads/main/assets/faces/speech.png",
+      "https://github.com/tipsypastels/porygon_duck_communism/blob/main/assets/faces/speech.png?raw=true",
     )
     .color("info")
     .title(":sparkles: Pong! Porygon is online~")
