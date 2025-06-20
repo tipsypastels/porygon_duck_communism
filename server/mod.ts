@@ -52,15 +52,8 @@ export const hono = new Hono()
 
       if (interaction.type === Discord.InteractionType.ApplicationCommand) {
         try {
-          // const response = await runCommand(interaction);
-          return respond({
-            type: Discord.InteractionResponseType.ChannelMessageWithSource,
-            data: {
-              embeds: [
-                { title: "srsly" },
-              ],
-            },
-          });
+          const response = await runCommand(interaction);
+          return respond(response);
         } catch (e) {
           console.log("Error", e);
           return respond({ type: 4, data: { content: "ooops" } });
