@@ -18,5 +18,9 @@ ping.register = (cmd) => {
 export default ping;
 
 const oops = usageError("oops", (e) => {
-  e.title("oops error");
+  e
+    .face("speech.png")
+    .color("info")
+    .title(":sparkles: Pong! Porygon is online~")
+    .description("_beep boop_ How are you today?");
 });
