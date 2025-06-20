@@ -54,7 +54,11 @@ export class Embed {
   }
 
   face(name: AssetGroupName<typeof FACES>) {
-    return this.#set("thumbnail", { url: FACES.get(name).url });
+    return this.thumbnail(FACES.get(name).url);
+  }
+
+  thumbnail(url: string) {
+    return this.#set("thumbnail", { url });
   }
 
   build() {
