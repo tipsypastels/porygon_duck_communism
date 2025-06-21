@@ -18,7 +18,7 @@ export const { startQueues, createQueue } = (() => {
 
       const handler = handlers.get(message.key);
       if (!handler) {
-        return void console.warn(`KV queue got unhandled message type`);
+        return void console.warn(`KV queue got unhandled key ${message.key}`);
       }
 
       await handler(message.event);
@@ -28,6 +28,7 @@ export const { startQueues, createQueue } = (() => {
   function createQueue<T>(handler: Handler<T>) {
     const key = crypto.randomUUID();
     handlers.set(key, handler);
+    console.log(`Created handler with key ${key}`);
 
     return async (event: T) => {
       await kv.enqueue({ key, event } satisfies Message<T>);
