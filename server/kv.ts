@@ -13,22 +13,24 @@ export const { startQueues, createQueue } = (() => {
         typeof message !== "object" ||
         typeof message.key !== "string"
       ) {
-        return void console.warn(`KV queue got invalid message: ${message}`);
+        return void console.warn(`Queue got invalid message ${message}`);
       }
 
-      const handler = handlers.get(message.key);
+      const { key, event } = message;
+      const handler = handlers.get(key);
+
       if (!handler) {
-        return void console.warn(`KV queue got unhandled key ${message.key}`);
+        return void console.warn(`Queue got unhandled key '${key}'`);
       }
 
-      await handler(message.event);
+      console.log(`Queue '${key}' got message`);
+      await handler(event);
     });
   }
 
-  function createQueue<T>(handler: Handler<T>) {
-    const key = crypto.randomUUID();
+  function createQueue<T>(key: string, handler: Handler<T>) {
     handlers.set(key, handler);
-    console.log(`Created handler with key ${key}`);
+    console.log(`Created '${key}' queue`);
 
     return async (event: T) => {
       await kv.enqueue({ key, event } satisfies Message<T>);

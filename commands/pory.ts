@@ -86,7 +86,7 @@ const markov = await (async () => {
       return result ?? EMPTY_FALLBACK;
     },
 
-    enqueue: createQueue(async (state: string) => {
+    enqueue: createQueue("porymarkov", async (state: string) => {
       states.push(state);
       train();
       await kv.set(KV_KEY, states);

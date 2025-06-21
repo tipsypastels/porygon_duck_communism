@@ -39,7 +39,7 @@ class Registrar {
       manifest[cell.data.name] = cell.data.id;
       this.#registered.add(cell);
 
-      console.log("Registered command", cell.data.name);
+      console.log(`Registered '${cell.data.name}' command`);
     }
 
     if (writeManifest) {
@@ -58,7 +58,7 @@ class Registrar {
 
       this.#registered.add({ command, data: { id, name } });
 
-      console.log("Hydrated command", name);
+      console.log(`Hydrated '${name}' command`);
     }
   }
 }
