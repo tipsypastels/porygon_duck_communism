@@ -1,5 +1,5 @@
 import { Command, CommandOptionType } from "../server/command/mod.ts";
-import { kv } from "../server/kv.ts";
+import { createQueue, kv } from "../server/kv.ts";
 import { random } from "$util/array.ts";
 import { codeBlock } from "$util/string.ts";
 
@@ -11,7 +11,7 @@ export const pory: Command = async ({ embed, options }) => {
 
   if (input) {
     embed.field("Input", codeBlock(input));
-    await markov.write(input);
+    await markov.enqueue(input);
   }
 
   embed.field("Output", codeBlock(output));
@@ -86,10 +86,10 @@ const markov = await (async () => {
       return result ?? EMPTY_FALLBACK;
     },
 
-    async write(state: string) {
+    enqueue: createQueue(async (state: string) => {
       states.push(state);
       train();
       await kv.set(KV_KEY, states);
-    },
+    }),
   };
 })();
