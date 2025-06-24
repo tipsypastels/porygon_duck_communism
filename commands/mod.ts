@@ -5,6 +5,7 @@ import { hug } from "./hug.ts";
 import { nudge } from "./nudge.ts";
 import { ping } from "./ping.ts";
 import { pory } from "./pory.ts";
+import { vibe } from "./vibe.ts";
 
 export function addCommands() {
   registrar
@@ -13,5 +14,6 @@ export function addCommands() {
     .add(hug)
     .add(nudge)
     .add(ping)
-    .add(pory);
+    .add(pory)
+    .add(vibe);
 }
