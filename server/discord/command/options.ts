@@ -1,6 +1,8 @@
 import { unwrap } from "$util/assert.ts";
 import { assert } from "@std/assert";
 import * as Discord from "discord-api-types";
+import { GuildMember } from "../member.ts";
+import { User } from "../user.ts";
 
 type Type = Discord.ApplicationCommandOptionType;
 const Type = Discord.ApplicationCommandOptionType;
@@ -33,6 +35,35 @@ export class CommandOptions {
 
   getOptionalString(name: string): string | undefined {
     return this.#tryGetTyped(name, Type.String)?.value;
+  }
+
+  // TODO: These can also technically be passed as mentionables, allow support for both if needed.
+  getUser(name: string): User {
+    return this.#getUser(this.#getTyped(name, Type.User).value);
+  }
+
+  getOptionalUser(name: string): User | undefined {
+    const id = this.#tryGetTyped(name, Type.User)?.value;
+    if (id) return this.#getUser(id);
+  }
+
+  getMember(name: string): GuildMember {
+    return this.#getMember(this.#getTyped(name, Type.User).value);
+  }
+
+  getOptionalMember(name: string): GuildMember | undefined {
+    const id = this.#tryGetTyped(name, Type.User)?.value;
+    if (id) return this.#getMember(id);
+  }
+
+  #getUser(id: string) {
+    return new User(this.#getResolved(id, "users"));
+  }
+
+  #getMember(id: string) {
+    const user = this.#getResolved(id, "users");
+    const data = this.#getResolved(id, "members");
+    return new GuildMember({ ...data, user });
   }
 
   #getTyped<const T extends Type>(name: string, type: T) {
@@ -70,6 +101,13 @@ export class CommandOptions {
 
   #tryGet(name: string) {
     return this.#options.find((option) => option.name === name);
+  }
+
+  #getResolved<K extends keyof Resolved>(id: string, key: K) {
+    return unwrap(
+      this.#resolved[key]?.[id],
+      `Missing resolved ${key}['${id}']`,
+    ) as NonNullable<Resolved[K]>[string];
   }
 
   // TODO: Replace with serialize for logging.

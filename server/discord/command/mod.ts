@@ -8,6 +8,7 @@ import {
 } from "@discordjs/builders";
 import * as Discord from "discord-api-types";
 import { EmbedBuilderV2 } from "../embed.ts";
+import { GuildMember } from "../member.ts";
 import { UsageError } from "./error.ts";
 import { CommandOptions } from "./options.ts";
 import { registrar } from "./registrar/mod.ts";
@@ -24,6 +25,7 @@ export interface Subcommand extends CommandFn {
 
 export interface CommandParams {
   embed: EmbedBuilderV2;
+  author: GuildMember;
   options: CommandOptions;
   interaction: Discord.APIChatInputApplicationCommandInteraction;
   setEphemeral(ephemeral?: boolean): void;
@@ -37,12 +39,13 @@ export async function runCommand(
     message: "command not found",
   });
 
-  const member = httpUnwrap(interaction.member, {
+  const authorData = httpUnwrap(interaction.member, {
     code: 400,
     message: "no member in payload",
   });
 
   const embed = new EmbedBuilderV2();
+  const author = new GuildMember(authorData);
   const options = new CommandOptions(
     interaction.data.options ?? [],
     interaction.data.resolved ?? {},
@@ -56,6 +59,7 @@ export async function runCommand(
 
   const params: CommandParams = {
     embed,
+    author,
     options,
     interaction,
     setEphemeral,
@@ -66,7 +70,7 @@ export async function runCommand(
   try {
     await cell.command(params);
 
-    console.log(`Command '${cell.data.name}' used by ${member.user.username}`);
+    console.log(`Command '${cell.data.name}' used by ${author.displayName}`);
 
     data = {
       embeds: [embed.toJSON()],
@@ -75,7 +79,7 @@ export async function runCommand(
   } catch (error) {
     if (error instanceof UsageError) {
       console.warn(
-        `Command '${cell.data.name}' got error ${error.code} when used by ${member.user.username}`,
+        `Command '${cell.data.name}' got error ${error.code} when used by ${author.displayName}`,
       );
 
       const embed = EmbedBuilderV2.into(error, cell.data.name);
@@ -87,7 +91,7 @@ export async function runCommand(
       };
     } else {
       console.error(
-        `Command '${cell.data.name}' crashed when used by ${member.user.username}`,
+        `Command '${cell.data.name}' crashed when used by ${author.displayName}`,
         error,
       );
 
