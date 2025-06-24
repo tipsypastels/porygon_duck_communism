@@ -14,4 +14,8 @@ export class User {
   get displayName() {
     return this.globalName ?? this.username;
   }
+
+  toString() {
+    return this.displayName;
+  }
 }

@@ -9,6 +9,7 @@ import {
 import * as Discord from "discord-api-types";
 import { EmbedBuilderV2 } from "../embed.ts";
 import { GuildMember } from "../member.ts";
+import { getGuildMembers } from "../rest.ts";
 import { UsageError } from "./error.ts";
 import { CommandOptions } from "./options.ts";
 import { registrar } from "./registrar/mod.ts";
@@ -29,6 +30,7 @@ export interface CommandParams {
   options: CommandOptions;
   interaction: Discord.APIChatInputApplicationCommandInteraction;
   setEphemeral(ephemeral?: boolean): void;
+  getMembers(): Promise<GuildMember[]>;
 }
 
 export async function runCommand(
@@ -57,12 +59,17 @@ export async function runCommand(
     ephemeral = e;
   };
 
+  const getMembers = async () => {
+    return (await getGuildMembers()).map((g) => new GuildMember(g));
+  };
+
   const params: CommandParams = {
     embed,
     author,
     options,
     interaction,
     setEphemeral,
+    getMembers,
   };
 
   let data: Discord.APIInteractionResponseCallbackData;

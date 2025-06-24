@@ -7,10 +7,7 @@ export class GuildMember {
   readonly nickname: string | undefined;
 
   constructor(
-    data: Omit<
-      Discord.APIInteractionGuildMember,
-      keyof Discord.APIBaseVoiceGuildMember
-    >,
+    data: Discord.APIGuildMember,
   ) {
     this.id = data.user.id;
     this.user = new User(data.user);
@@ -19,5 +16,9 @@ export class GuildMember {
 
   get displayName() {
     return this.nickname ?? this.user.displayName;
+  }
+
+  toString() {
+    return this.displayName;
   }
 }
