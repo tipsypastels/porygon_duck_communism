@@ -15,7 +15,7 @@ export function httpUnwrap<T>(
   value: T,
   options: HTTPAssertOptions,
 ): NonNullable<T> {
-  httpAssert(value, options);
+  httpAssert(value != null, options);
   return value;
 }
 
@@ -23,7 +23,7 @@ export function httpAssert(
   value: unknown,
   options: HTTPAssertOptions,
 ): asserts value {
-  if (value == null) httpException(options);
+  if (!value) httpException(options);
 }
 
 export function httpException({ code, message }: HTTPAssertOptions): never {
