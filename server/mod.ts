@@ -1,4 +1,4 @@
-import { httpAssert } from "$util/assert.ts";
+import { httpAssert, httpException } from "$util/assert.ts";
 import * as Discord from "discord-api-types";
 import { Hono } from "hono";
 import { serveStatic } from "hono/deno";
@@ -60,7 +60,7 @@ export const hono = new Hono()
           return respond(response);
         }
         default: {
-          httpAssert(false, { code: 400, message: "bad request" });
+          httpException({ code: 400, message: "bad request" });
         }
       }
     },

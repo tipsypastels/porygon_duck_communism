@@ -21,7 +21,11 @@ export function httpUnwrap<T>(
 
 export function httpAssert(
   value: unknown,
-  { code, message }: HTTPAssertOptions,
+  options: HTTPAssertOptions,
 ): asserts value {
-  if (value == null) throw new HTTPException(code, { message });
+  if (value == null) httpException(options);
+}
+
+export function httpException({ code, message }: HTTPAssertOptions): never {
+  throw new HTTPException(code, { message });
 }
