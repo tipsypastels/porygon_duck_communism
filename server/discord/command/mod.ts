@@ -1,4 +1,6 @@
 import { httpUnwrap } from "$util/assert.ts";
+import { getErrorMessage } from "$util/error.ts";
+import { codeBlock } from "$util/string.ts";
 import { Awaitable } from "$util/types.ts";
 import {
   SlashCommandBuilder,
@@ -89,9 +91,18 @@ export async function runCommand(
         error,
       );
 
-      // TODO
+      const embed = new EmbedBuilderV2()
+        .setTitle("Error! Porygon crashed.")
+        .setDescription(
+          `An error was thrown while executing the \`${cell.data.name}\` command.`,
+        )
+        .setPoryError("error");
+
+      const errorMessage = getErrorMessage(error);
+      if (errorMessage) embed.addField("Error", codeBlock(errorMessage));
+
       data = {
-        content: "CRASH",
+        embeds: [embed.toJSON()],
       };
     }
   }
