@@ -1,6 +1,6 @@
 import { addCommands } from "../commands/mod.ts";
-import { registrar } from "../server/discord/command/registrar.ts";
+import { registrar } from "../server/discord/command/registrar/mod.ts";
 
 addCommands();
 
-await registrar.register({ writeManifest: true });
+await registrar.register();

@@ -5,6 +5,14 @@ import { BOT_ID, BOT_TOKEN, GUILD_ID } from "./env.ts";
 
 const rest = new REST().setToken(BOT_TOKEN);
 
+export async function postApplicationGuildCommand(
+  command: D.RESTPostAPIApplicationCommandsJSONBody,
+) {
+  return await rest.post(D.Routes.applicationGuildCommands(BOT_ID, GUILD_ID), {
+    body: command,
+  }) as D.APIApplicationCommand;
+}
+
 export async function putApplicationGuildCommands(
   commands: D.RESTPostAPIApplicationCommandsJSONBody[],
 ) {

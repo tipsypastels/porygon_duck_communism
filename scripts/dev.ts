@@ -5,7 +5,7 @@ import {
   Events,
 } from "npm:discord.js@^14.20.0";
 import { addCommands } from "../commands/mod.ts";
-import { registrar } from "../server/discord/command/registrar.ts";
+import { registrar } from "../server/discord/command/registrar/mod.ts";
 import { BOT_TOKEN } from "../server/discord/env.ts";
 import { postInteractionCallback } from "../server/discord/rest.ts";
 import { hono } from "../server/mod.ts";
@@ -40,7 +40,7 @@ addCommands();
 startQueues();
 
 await Promise.all([
-  registrar.register({ writeManifest: false }),
+  registrar.registerChanges(),
   client.login(BOT_TOKEN),
 ]);
 

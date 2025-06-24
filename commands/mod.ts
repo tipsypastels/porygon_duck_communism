@@ -1,4 +1,4 @@
-import { registrar } from "../server/discord/command/registrar.ts";
+import { registrar } from "../server/discord/command/registrar/mod.ts";
 import { eightBall } from "./8ball.ts";
 import { calc } from "./calc.ts";
 import { ping } from "./ping.ts";

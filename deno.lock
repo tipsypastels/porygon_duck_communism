@@ -6,9 +6,11 @@
     "jsr:@std/internal@^1.0.6": "1.0.8",
     "npm:@discordjs/builders@^1.11.2": "1.11.2",
     "npm:@discordjs/rest@^2.5.1": "2.5.1",
+    "npm:@types/sha1@^1.1.5": "1.1.5",
     "npm:discord-api-types@~0.38.13": "0.38.13",
     "npm:discord.js@^14.20.0": "14.20.0",
     "npm:mathjs@^14.5.2": "14.5.2",
+    "npm:sha1@^1.1.1": "1.1.1",
     "npm:tweetnacl@^1.0.3": "1.0.3"
   },
   "jsr": {
@@ -112,6 +114,12 @@
         "undici-types"
       ]
     },
+    "@types/sha1@1.1.5": {
+      "integrity": "sha512-eE1PzjW7u2VfxI+bTsvjzjBfpwqvxSpgfUmnRNVY+PJU1NBsdGZlaO/qnVnPKHzzpgIl9YyBIxvrgBvt1mzt2A==",
+      "dependencies": [
+        "@types/node"
+      ]
+    },
     "@types/ws@8.18.1": {
       "integrity": "sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==",
       "dependencies": [
@@ -121,8 +129,14 @@
     "@vladfrangu/async_event_emitter@2.4.6": {
       "integrity": "sha512-RaI5qZo6D2CVS6sTHFKg1v5Ohq/+Bo2LZ5gzUEwZ/WkHhwtGTCB/sVLw8ijOkAUxasZ+WshN/Rzj4ywsABJ5ZA=="
     },
+    "charenc@0.0.2": {
+      "integrity": "sha512-yrLQ/yVUFXkzg7EDQsPieE/53+0RlaWTs+wBrvW36cyilJ2SaDWfl4Yj7MtLTXleV9uEKefbAGUPv2/iWSooRA=="
+    },
     "complex.js@2.4.2": {
       "integrity": "sha512-qtx7HRhPGSCBtGiST4/WGHuW+zeaND/6Ld+db6PbrulIB1i2Ev/2UPiqcmpQNPSyfBKraC0EOvOKCB5dGZKt3g=="
+    },
+    "crypt@0.0.2": {
+      "integrity": "sha512-mCxBlsHFYh9C+HVpiEacem8FEBnMXgU9gy4zmNC+SXAZNB/1idgp/aulFJ4FgCi7GPEVbfyng092GqL2k2rmow=="
     },
     "decimal.js@10.4.3": {
       "integrity": "sha512-VBBaLc1MgL5XpzgIP7ny5Z6Nx3UrRkIViUkPUdtl9aya5amy3De1gsUUSB1g3+3sExYNjCAsAznmukyxCb1GRA=="
@@ -190,6 +204,13 @@
     "seedrandom@3.0.5": {
       "integrity": "sha512-8OwmbklUNzwezjGInmZ+2clQmExQPvomqjL7LFqOYqtmuxRgQYqOD3mHaU+MvZn5FLUeVxVfQjwLZW/n/JFuqg=="
     },
+    "sha1@1.1.1": {
+      "integrity": "sha512-dZBS6OrMjtgVkopB1Gmo4RQCDKiZsqcpAQpkV/aaj+FCrCg8r4I4qMkDPQjBgLIxlmu9k4nUbWq6ohXahOneYA==",
+      "dependencies": [
+        "charenc",
+        "crypt"
+      ]
+    },
     "tiny-emitter@2.1.0": {
       "integrity": "sha512-NB6Dk1A9xgQPMoGqC5CVXn123gWyte215ONT5Pp5a0yt4nlEoO1ZWeCwpncaekPHXO60i47ihFnZPiRPjRMq4Q=="
     },
@@ -221,8 +242,10 @@
       "jsr:@std/assert@^1.0.13",
       "npm:@discordjs/builders@^1.11.2",
       "npm:@discordjs/rest@^2.5.1",
+      "npm:@types/sha1@^1.1.5",
       "npm:discord-api-types@~0.38.13",
       "npm:mathjs@^14.5.2",
+      "npm:sha1@^1.1.1",
       "npm:tweetnacl@^1.0.3"
     ]
   }

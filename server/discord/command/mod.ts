@@ -10,7 +10,7 @@ import * as Discord from "discord-api-types";
 import { EmbedBuilderV2 } from "../embed.ts";
 import { UsageError } from "./error.ts";
 import { CommandOptions } from "./options.ts";
-import { registrar } from "./registrar.ts";
+import { registrar } from "./registrar/mod.ts";
 
 export type CommandFn = (params: CommandParams) => Awaitable<void>;
 
