@@ -5,8 +5,10 @@ import { BOT_ID, BOT_TOKEN, GUILD_ID } from "./env.ts";
 
 const rest = new REST().setToken(BOT_TOKEN);
 
-export async function getGuildMembers() {
-  return await rest.get(R.guildMembers(GUILD_ID)) as D.APIGuildMember[];
+export async function getGuildMembers({ limit = 1000 }) {
+  return await rest.get(R.guildMembers(GUILD_ID), {
+    query: new URLSearchParams({ limit: limit.toString() }),
+  }) as D.APIGuildMember[];
 }
 
 export async function postApplicationGuildCommand(
