@@ -1,25 +1,23 @@
-import { usageError } from "../server/command/error.ts";
-import { Command, CommandOptionType } from "../server/command/mod.ts";
+import { usageError } from "../server/bot/command/error.ts";
+import { Command } from "../server/bot/command/mod.ts";
 import { codeBlock, ellipsis } from "$util/string.ts";
 import { all, create } from "mathjs";
 
 export const calc: Command = async ({ embed, options }) => {
-  const equation = options.string("equation");
+  const equation = options.getString("equation");
   const equationTrunc = codeBlock(ellipsis(equation, 100));
 
-  embed.field("Equation", equationTrunc);
+  embed.addField("Equation", equationTrunc);
 
   try {
     const result = await evaluate(equation);
 
     embed
-      .color("info")
-      .title("Aaand the answer is...")
-      .field("Result", codeBlock(result));
+      .setTitle("Aaand the answer is...")
+      .setPoryColor("ok")
+      .addField("Result", codeBlock(result));
   } catch (error) {
-    if (error instanceof Disabled) {
-      throw disabledError(error);
-    } else if (error instanceof Error) {
+    if (error instanceof Error) {
       throw parseError(error.message);
     } else {
       throw error;
@@ -27,43 +25,38 @@ export const calc: Command = async ({ embed, options }) => {
   }
 };
 
-calc.regData = {
-  name: "calc",
-  description: "Does your math homework.",
-  options: [
-    {
-      name: "equation",
-      type: CommandOptionType.String,
-      required: true,
-      description: "An equation to evaluate.",
-    },
-  ],
+calc.build = (cmd) => {
+  cmd
+    .setName("calc")
+    .setDescription("Does your math homework.")
+    .addStringOption((opt) =>
+      opt
+        .setName("equation")
+        .setDescription("An equation to evaluate.")
+        .setRequired(true)
+    );
 };
 
 /* -------------------------------------------------------------------------- */
 /*                                   Errors                                   */
 /* -------------------------------------------------------------------------- */
 
-class Disabled {
-  constructor(readonly name: string) {}
-}
-
 const parseError = usageError("parseError", (embed, message: string) => {
   embed
-    .error("warning")
-    .title(
+    .setTitle(
       "_Porygon adjusts her glasses and takes another look at that equation._",
     )
-    .description(codeBlock(message));
+    .setDescription(codeBlock(message))
+    .setPoryError("warning");
 });
 
 const disabledError = usageError(
   "disabledError",
-  (embed, { name }: Disabled) => {
+  (embed, name: string) => {
     embed
-      .error("danger")
-      .title(`Unsafe function '${name}' may not be used!`)
-      .description("I see you there. Trying to break things.");
+      .setTitle(`Unsafe function '${name}' may not be used!`)
+      .setDescription("I see you there. Trying to break things.")
+      .setPoryError("danger");
   },
 );
 
@@ -76,7 +69,7 @@ const evaluate = math.evaluate.bind(math);
 
 function makeDisabled(name: string) {
   return () => {
-    throw new Disabled(name);
+    throw disabledError(name);
   };
 }
 

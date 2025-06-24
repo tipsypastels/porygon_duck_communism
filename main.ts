@@ -1,1 +1,1 @@
-import "./scripts/serve.ts";
+import "./scripts/start.ts";
