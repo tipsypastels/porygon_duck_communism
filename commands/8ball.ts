@@ -1,6 +1,6 @@
 import { random } from "$util/array.ts";
 import { ellipsis } from "$util/string.ts";
-import { Command } from "../server/bot/command/mod.ts";
+import { Command } from "../server/discord/command/mod.ts";
 
 export const eightBall: Command = ({ embed, options }) => {
   const question = options.getString("question");

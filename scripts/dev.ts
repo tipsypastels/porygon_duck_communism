@@ -1,10 +1,47 @@
-import { App } from "../server/mod.ts";
+import {
+  APIInteraction,
+  APIInteractionResponse,
+  Client,
+  Events,
+} from "npm:discord.js@^14.20.0";
+import { addCommands } from "../commands/mod.ts";
+import { registrar } from "../server/discord/command/registrar.ts";
+import { BOT_TOKEN } from "../server/discord/env.ts";
+import { postInteractionCallback } from "../server/discord/rest.ts";
+import { hono } from "../server/mod.ts";
+import { startQueues } from "../server/queue.ts";
 
-const app = new App({ dev: true });
+const client = new Client({ intents: [] });
 
-app.addStartupTask("register");
-app.addStartupTask("login");
+client.once(Events.ClientReady, (client) => {
+  console.log(`Ready! Logged in as ${client.user.tag}`);
+});
 
-await app.startup();
+client.on(Events.Raw, async (data) => {
+  if (data.t !== "INTERACTION_CREATE") {
+    return;
+  }
 
-app.serve();
+  const interaction: APIInteraction = data.d;
+  const res = await hono.request("/send", {
+    method: "POST",
+    body: JSON.stringify(interaction),
+  });
+
+  if (res.status !== 200) {
+    return void console.error("Failed to proxy interaction");
+  }
+
+  const callback: APIInteractionResponse = await res.json();
+  await postInteractionCallback(interaction.id, interaction.token, callback);
+});
+
+addCommands();
+startQueues();
+
+await Promise.all([
+  registrar.register({ writeManifest: false }),
+  client.login(BOT_TOKEN),
+]);
+
+Deno.serve(hono.fetch);

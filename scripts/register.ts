@@ -1,7 +1,6 @@
-import { App } from "../server/mod.ts";
+import { addCommands } from "../commands/mod.ts";
+import { registrar } from "../server/discord/command/registrar.ts";
 
-const app = new App({ dev: false });
+addCommands();
 
-app.addStartupTask("register");
-
-await app.startup();
+await registrar.register({ writeManifest: true });

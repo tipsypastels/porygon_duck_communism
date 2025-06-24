@@ -1,7 +1,7 @@
-import { usageError } from "../server/bot/command/error.ts";
-import { Command } from "../server/bot/command/mod.ts";
 import { codeBlock, ellipsis } from "$util/string.ts";
 import { all, create } from "mathjs";
+import { usageError } from "../server/discord/command/error.ts";
+import { Command } from "../server/discord/command/mod.ts";
 
 export const calc: Command = async ({ embed, options }) => {
   const equation = options.getString("equation");

@@ -1,7 +1,7 @@
 import { unwrap } from "$util/assert.ts";
-import { APIApplicationCommand, Routes, SlashCommandBuilder } from "discord.js";
-import { Bot } from "../mod.ts";
+import { SlashCommandBuilder } from "@discordjs/builders";
 import { Command } from "./mod.ts";
+import { putApplicationGuildCommands } from "../rest.ts";
 
 type Manifest = Record<string, string>;
 
@@ -13,14 +13,8 @@ export interface CommandCell {
 }
 
 export class CommandRegistrar {
-  #bot: Bot;
-
   #unregistered = new UnregisteredList();
   #registered = new RegisteredList();
-
-  constructor(bot: Bot) {
-    this.#bot = bot;
-  }
 
   getById(id: string) {
     return this.#registered.byId.get(id);
@@ -39,7 +33,6 @@ export class CommandRegistrar {
   async register({ writeManifest }: { writeManifest: boolean }) {
     const manifest: Manifest = {};
     const unregistered = this.#unregistered.take();
-    const { rest, env } = this.#bot;
 
     const postData = unregistered.map((command) => {
       const builder = new SlashCommandBuilder();
@@ -47,10 +40,7 @@ export class CommandRegistrar {
       return builder.toJSON();
     });
 
-    const responseData = await rest.put(
-      Routes.applicationGuildCommands(env.botId, env.guildId),
-      { body: postData },
-    ) as APIApplicationCommand[];
+    const responseData = await putApplicationGuildCommands(postData);
 
     for (let i = 0; i < responseData.length; i++) {
       // assumes that the output is in order
@@ -113,3 +103,5 @@ class RegisteredList {
     this.byCommand.set(cell.command, cell);
   }
 }
+
+export const registrar = new CommandRegistrar();

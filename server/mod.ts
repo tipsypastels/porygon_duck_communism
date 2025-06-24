@@ -1,31 +1,67 @@
+import { httpAssert } from "$util/assert.ts";
+import * as Discord from "discord-api-types";
 import { Hono } from "hono";
 import { serveStatic } from "hono/deno";
-import { Bot } from "./bot/mod.ts";
-import { StartupTask, StartupTasks } from "./startup.ts";
+import { Buffer } from "node:buffer";
+import nacl from "tweetnacl";
+import { runCommand } from "./discord/command/mod.ts";
+import { PUBLIC_KEY } from "./discord/env.ts";
+import { DEV } from "./env.ts";
 
-export class App {
-  readonly dev: boolean;
-  readonly bot: Bot;
+export const hono = new Hono()
+  .use(serveStatic({ root: "public" }))
+  .post(
+    "/send",
+    async (ctx, next) => {
+      if (DEV) {
+        return next();
+      }
 
-  #startupTasks = new StartupTasks(this);
+      const signature = ctx.req.header("X-Signature-Ed25519") ?? "";
+      const timestamp = ctx.req.header("X-Signature-Timestamp") ?? "";
+      const body = await ctx.req.text();
+      let valid: boolean;
 
-  #hono = new Hono()
-    .use(serveStatic({ root: "public" }));
+      try {
+        valid = nacl.sign.detached.verify(
+          Buffer.from(timestamp + body),
+          Buffer.from(signature, "hex"),
+          Buffer.from(PUBLIC_KEY, "hex"),
+        );
+      } catch {
+        valid = false;
+      }
 
-  constructor({ dev }: { dev: boolean }) {
-    this.dev = dev;
-    this.bot = new Bot({ dev });
-  }
+      httpAssert(valid, { code: 401, message: "invalid request signature" });
+      return next();
+    },
+    async (ctx) => {
+      console.log("Received interaction");
 
-  addStartupTask(...task: StartupTask) {
-    this.#startupTasks.add(...task);
-  }
+      const interaction: Discord.APIInteraction = await ctx.req.json();
+      const respond = (response: Discord.APIInteractionResponse) => {
+        console.log("Responding to interaction", response);
+        return ctx.json(response);
+      };
 
-  startup() {
-    return this.#startupTasks.run();
-  }
+      switch (interaction.type) {
+        case Discord.InteractionType.Ping: {
+          return respond({ type: Discord.InteractionResponseType.Pong });
+        }
+        case Discord.InteractionType.ApplicationCommand: {
+          httpAssert(
+            interaction.data.type == Discord.ApplicationCommandType.ChatInput,
+            { code: 400, message: "bad request" },
+          );
 
-  serve() {
-    Deno.serve(this.#hono.fetch);
-  }
-}
+          const response = await runCommand(
+            interaction as Discord.APIChatInputApplicationCommandInteraction,
+          );
+          return respond(response);
+        }
+        default: {
+          httpAssert(false, { code: 400, message: "bad request" });
+        }
+      }
+    },
+  );

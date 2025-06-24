@@ -1,4 +1,4 @@
-import { EmbedBuilder } from "discord.js";
+import { EmbedBuilder } from "@discordjs/builders";
 import { FACES } from "../asset.ts";
 
 export type IntoEmbed<P extends unknown[] = []> =

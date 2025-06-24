@@ -1,10 +1,11 @@
-import { App } from "../server/mod.ts";
+import { addCommands } from "../commands/mod.ts";
+import { registrar } from "../server/discord/command/registrar.ts";
+import { hono } from "../server/mod.ts";
+import { startQueues } from "../server/queue.ts";
 
-const app = new App({ dev: false });
+addCommands();
+startQueues();
 
-app.addStartupTask("hydrate");
-app.addStartupTask("login");
+// await registrar.hydrate();
 
-await app.startup();
-
-app.serve();
+Deno.serve(hono.fetch);

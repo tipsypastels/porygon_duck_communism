@@ -1,4 +1,4 @@
-import { Command } from "../server/bot/command/mod.ts";
+import { Command } from "../server/discord/command/mod.ts";
 
 export const ping: Command = ({ embed, setEphemeral }) => {
   setEphemeral();
