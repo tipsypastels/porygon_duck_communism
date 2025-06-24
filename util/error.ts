@@ -8,7 +8,7 @@ export function getErrorMessage(error: unknown) {
     }
     case error != null && typeof error === "object" && "message" in error &&
       typeof error.message === "string": {
-      error.message;
+      return error.message;
     }
   }
 }
