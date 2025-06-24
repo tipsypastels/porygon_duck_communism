@@ -1,31 +1,30 @@
 import { random } from "$util/array.ts";
 import { ellipsis } from "$util/string.ts";
-import { Command, CommandOptionType } from "../server/command/mod.ts";
+import { Command } from "../server/bot/command/mod.ts";
 
 export const eightBall: Command = ({ embed, options }) => {
-  const question = options.string("question");
+  const question = options.getString("question");
   const questionTrunc = ellipsis(question, QUESTION_MAX_LEN);
   const answer = random(ANSWERS);
 
   embed
-    .face("8ball.png")
-    .color("info")
-    .title("The wise oracle Porygon studies her magic 8-ball.")
-    .field("Question", questionTrunc)
-    .field("Answer", answer);
+    .setTitle("The wise oracle Porygon studies her magic 8-ball.")
+    .setPoryFace("8ball.png")
+    .setPoryColor("info")
+    .addField("Question", questionTrunc)
+    .addField("Answer", answer);
 };
 
-eightBall.regData = {
-  name: "8ball",
-  description: "Asks a question of the wise oracle Porygon.",
-  options: [
-    {
-      name: "question",
-      type: CommandOptionType.String,
-      required: true,
-      description: "The question you would ask the wise oracle Porygon.",
-    },
-  ],
+eightBall.build = (cmd) => {
+  cmd
+    .setName("8ball")
+    .setDescription("Asks a question of the wise oracle Porygon.")
+    .addStringOption((opt) =>
+      opt
+        .setName("question")
+        .setDescription("The question you would ask the wise oracle Porygon.")
+        .setRequired(true)
+    );
 };
 
 const QUESTION_MAX_LEN = 300;

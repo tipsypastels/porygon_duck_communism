@@ -5,10 +5,6 @@ on:
   pull_request:
     branches: main
 
-env:
-  DISCORD_GUILD_ID: "322199235825238017"
-  DISCORD_PUBLIC_KEY: "5f93e0de0ee22d7aff619053d12d2ee0c8b93936aec3401f96b82d02e20d5fc3"
-
 jobs:
   deploy:
     name: Deploy
@@ -32,6 +28,7 @@ jobs:
         env:
           DISCORD_BOT_ID: ${{ secrets.DISCORD_BOT_ID }}
           DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+          DISCORD_GUILD_ID: ${{ secrets.DISCORD_GUILD_ID }}
 
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1

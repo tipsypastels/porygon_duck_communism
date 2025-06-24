@@ -1,4 +1,4 @@
-import { Embed, IntoEmbedFn } from "../discord/embed.ts";
+import { IntoEmbedFn } from "../embed.ts";
 
 const FRIEND: unique symbol = Symbol();
 
@@ -18,13 +18,15 @@ export interface UsageErrorOptions {
 
 export function usageError<P extends unknown[]>(
   codeOrOptions: string | UsageErrorOptions,
-  f: (embed: Embed, ...params: P) => void,
+  f: IntoEmbedFn<P>,
 ) {
   const { code, ephemeral = true }: UsageErrorOptions =
     typeof codeOrOptions === "string" ? { code: codeOrOptions } : codeOrOptions;
 
   return (...params: P) =>
     new UsageError(FRIEND, code, ephemeral, (embed, commandName) => {
-      embed.into(f, ...params).footer(`Error Code: ${commandName}.${code}`);
+      embed
+        .into(f, ...params)
+        .setFooter({ text: `Error Code: ${commandName}.${code}` });
     });
 }

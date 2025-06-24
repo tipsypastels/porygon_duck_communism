@@ -1,17 +1,34 @@
-import { unwrap } from "$util/unwrap.ts";
-import { putApplicationGuildCommands } from "../discord/rest.ts";
-import { Command, CommandRegData } from "./mod.ts";
+import { unwrap } from "$util/assert.ts";
+import { APIApplicationCommand, Routes, SlashCommandBuilder } from "discord.js";
+import { Bot } from "../mod.ts";
+import { Command } from "./mod.ts";
 
 type Manifest = Record<string, string>;
 
 const MANIFEST_FILE = new URL("../../.commands", import.meta.url).pathname;
 
-class Registrar {
+export interface CommandCell {
+  command: Command;
+  data: { id: string; name: string };
+}
+
+export class CommandRegistrar {
+  #bot: Bot;
+
   #unregistered = new UnregisteredList();
   #registered = new RegisteredList();
 
+  constructor(bot: Bot) {
+    this.#bot = bot;
+  }
+
   getById(id: string) {
-    return this.#registered.byId.get(id)?.command;
+    return this.#registered.byId.get(id);
+  }
+
+  into(f: (registrar: CommandRegistrar) => void) {
+    f(this);
+    return this;
   }
 
   add(command: Command) {
@@ -20,21 +37,26 @@ class Registrar {
   }
 
   async register({ writeManifest }: { writeManifest: boolean }) {
-    const regData: CommandRegData[] = [];
-    const unregistered = this.#unregistered.take();
-
-    for (const command of unregistered) {
-      regData.push(command.regData);
-    }
-
-    const responseData = await putApplicationGuildCommands(regData);
     const manifest: Manifest = {};
+    const unregistered = this.#unregistered.take();
+    const { rest, env } = this.#bot;
+
+    const postData = unregistered.map((command) => {
+      const builder = new SlashCommandBuilder();
+      command.build(builder);
+      return builder.toJSON();
+    });
+
+    const responseData = await rest.put(
+      Routes.applicationGuildCommands(env.botId, env.guildId),
+      { body: postData },
+    ) as APIApplicationCommand[];
 
     for (let i = 0; i < responseData.length; i++) {
       // assumes that the output is in order
       const command = unregistered[i];
       const commandResponseData = responseData[i];
-      const cell: Cell = { command, data: commandResponseData };
+      const cell: CommandCell = { command, data: commandResponseData };
 
       manifest[cell.data.name] = cell.data.id;
       this.#registered.add(cell);
@@ -53,7 +75,10 @@ class Registrar {
     const unregistered = this.#unregistered.take();
 
     for (const command of unregistered) {
-      const { name } = command.regData;
+      const builder = new SlashCommandBuilder();
+      command.build(builder);
+
+      const { name } = builder;
       const id = unwrap(manifest[name], `Command '${name}' not in manifest`);
 
       this.#registered.add({ command, data: { id, name } });
@@ -78,20 +103,13 @@ class UnregisteredList {
 }
 
 class RegisteredList {
-  byId = new Map<string, Cell>();
-  byName = new Map<string, Cell>();
-  byCommand = new Map<Command, Cell>();
+  byId = new Map<string, CommandCell>();
+  byName = new Map<string, CommandCell>();
+  byCommand = new Map<Command, CommandCell>();
 
-  add(cell: Cell) {
+  add(cell: CommandCell) {
     this.byId.set(cell.data.id, cell);
     this.byName.set(cell.data.name, cell);
     this.byCommand.set(cell.command, cell);
   }
 }
-
-interface Cell {
-  command: Command;
-  data: { id: string; name: string };
-}
-
-export const registrar = new Registrar();

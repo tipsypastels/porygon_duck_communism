@@ -1,42 +1,31 @@
-import * as Discord from "discord-api-types";
 import { Hono } from "hono";
 import { serveStatic } from "hono/deno";
-import { HTTPException } from "hono/http-exception";
-import { runCommand } from "./command/runner.ts";
-import { DEV } from "./env.ts";
-import { signature } from "./signature.ts";
+import { Bot } from "./bot/mod.ts";
+import { StartupTask, StartupTasks } from "./startup.ts";
 
-export const hono = new Hono()
-  .use(serveStatic({ root: "public" }))
-  .post(
-    "/send",
-    signature({ enabled: !DEV }),
-    async (ctx) => {
-      const interaction: Discord.APIInteraction = await ctx.req.json();
+export class App {
+  readonly dev: boolean;
+  readonly bot: Bot;
 
-      console.log("Received interaction", interaction);
+  #startupTasks = new StartupTasks(this);
 
-      const respond = (response: Discord.APIInteractionResponse) => {
-        console.log("Responding to interaction", response);
-        return ctx.json(response);
-      };
+  #hono = new Hono()
+    .use(serveStatic({ root: "public" }));
 
-      if (interaction.type === Discord.InteractionType.Ping) {
-        return respond({
-          type: Discord.InteractionResponseType.Pong,
-        });
-      }
+  constructor({ dev }: { dev: boolean }) {
+    this.dev = dev;
+    this.bot = new Bot({ dev });
+  }
 
-      if (interaction.type === Discord.InteractionType.ApplicationCommand) {
-        try {
-          const response = await runCommand(interaction);
-          return respond(response);
-        } catch (e) {
-          console.log("Error", e);
-          return respond({ type: 4, data: { content: "ooops" } });
-        }
-      }
+  addStartupTask(...task: StartupTask) {
+    this.#startupTasks.add(...task);
+  }
 
-      throw new HTTPException(400, { message: "bad request" });
-    },
-  );
+  startup() {
+    return this.#startupTasks.run();
+  }
+
+  serve() {
+    Deno.serve(this.#hono.fetch);
+  }
+}
