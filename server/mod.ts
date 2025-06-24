@@ -32,6 +32,14 @@ export const hono = new Hono()
         valid = false;
       }
 
+      console.log({
+        signature,
+        timestamp,
+        body,
+        valid,
+        PUBLIC_KEY,
+      });
+
       httpAssert(valid, { code: 401, message: "invalid request signature" });
       return next();
     },
