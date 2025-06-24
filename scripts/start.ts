@@ -6,6 +6,6 @@ import { startQueues } from "../server/queue.ts";
 addCommands();
 startQueues();
 
-// await registrar.hydrate();
+await registrar.hydrate();
 
 Deno.serve(hono.fetch);

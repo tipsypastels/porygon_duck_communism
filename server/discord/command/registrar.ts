@@ -5,7 +5,7 @@ import { putApplicationGuildCommands } from "../rest.ts";
 
 type Manifest = Record<string, string>;
 
-const MANIFEST_FILE = new URL("../../.commands", import.meta.url).pathname;
+const MANIFEST_FILE = new URL("../../../.commands", import.meta.url).pathname;
 
 export interface CommandCell {
   command: Command;
