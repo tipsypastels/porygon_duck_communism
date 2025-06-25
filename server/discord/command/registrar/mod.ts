@@ -7,6 +7,7 @@ import {
 } from "../../rest.ts";
 import { Manifest } from "./manifest.ts";
 import { Command } from "../mod.ts";
+import { Collection } from "@discordjs/collection";
 
 export interface CommandCell {
   command: Command;
@@ -39,7 +40,10 @@ export class CommandRegistrar {
     const manifest = await Manifest.openOrEmpty();
     return await this.#register(
       manifest,
-      (data) => Promise.all(data.map(postApplicationGuildCommand)),
+      async (data) =>
+        new Collection(
+          await Promise.all(data.map(postApplicationGuildCommand)),
+        ),
       (data) => manifest.isNewOrHasChanged(data),
     );
   }
@@ -48,7 +52,7 @@ export class CommandRegistrar {
     manifest: Manifest,
     submitData: (
       data: Discord.RESTPostAPIApplicationCommandsJSONBody[],
-    ) => Promise<Discord.APIApplicationCommand[]>,
+    ) => Promise<Collection<string, Discord.APIApplicationCommand>>,
     filterData?: (
       data: Discord.RESTPostAPIApplicationCommandsJSONBody,
     ) => boolean,

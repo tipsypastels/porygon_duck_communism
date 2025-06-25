@@ -10,7 +10,7 @@ export const vibe: Command = ({ embed, author }) => {
     .setDescription(
       `${author.displayName} is **${negative}** but makes up for it by **${positive}**`,
     )
-    .setAuthor({ name: "✨ 𝓋𝒾𝒷𝑒 𝒸𝒽𝑒𝒸𝓀 ✨" })
+    .setAuthorName("✨ 𝓋𝒾𝒷𝑒 𝒸𝒽𝑒𝒸𝓀 ✨")
     .setPoryFace("vibe.png")
     .setPoryColor("info");
 };

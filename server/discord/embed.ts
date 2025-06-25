@@ -33,6 +33,14 @@ export class EmbedBuilderV2 extends EmbedBuilder {
     return this.addFields({ name, value, inline: true });
   }
 
+  setAuthorName(name: string) {
+    return this.setAuthor({ name });
+  }
+
+  setFooterText(text: string) {
+    return this.setFooter({ text });
+  }
+
   setPoryColor(name: keyof typeof PORY_COLORS) {
     return this.setColor(PORY_COLORS[name]);
   }

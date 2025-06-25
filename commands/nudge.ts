@@ -1,11 +1,11 @@
 import { Command } from "../server/discord/command/mod.ts";
-import { random, randomN, toSentence } from "$util/array.ts";
+import { random, toSentence } from "$util/array.ts";
 
 export const nudge: Command = async ({ embed, getMembers }) => {
   const members = await getMembers();
   const disaster = random(DISASTERS);
-  const count = Math.min(random(BASE_COUNT), members.length);
-  const victims = randomN(count, members);
+  const count = Math.min(random(BASE_COUNT), members.size);
+  const victims = members.random(count);
 
   embed
     .setTitle(disaster)

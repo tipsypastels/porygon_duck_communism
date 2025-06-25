@@ -13,6 +13,7 @@ import { getGuildMembers } from "../rest.ts";
 import { UsageError } from "./error.ts";
 import { CommandOptions } from "./options.ts";
 import { registrar } from "./registrar/mod.ts";
+import { Collection } from "@discordjs/collection";
 
 export type CommandFn = (params: CommandParams) => Awaitable<void>;
 
@@ -30,7 +31,36 @@ export interface CommandParams {
   options: CommandOptions;
   interaction: Discord.APIChatInputApplicationCommandInteraction;
   setEphemeral(ephemeral?: boolean): void;
-  getMembers(): Promise<GuildMember[]>;
+  getMembers(): Promise<Collection<string, GuildMember>>;
+}
+
+export function fuse(
+  subcommands: Record<string, Subcommand>,
+  build: (builder: SlashCommandBuilder) => void,
+) {
+  const command: Command = ({ options, ...other }) => {
+    const subcommandInfo = options.getSubcommandInfo();
+    // TODO: Technically this replies on command fns having the same name as their commands.
+    const subcommand = subcommands[subcommandInfo.name];
+
+    return subcommand({
+      options: subcommandInfo.options,
+      ...other,
+    });
+  };
+
+  command.build = (cmd) => {
+    build(cmd);
+
+    for (const subcommand of Object.values(subcommands)) {
+      cmd.addSubcommand((cmd) => {
+        subcommand.build(cmd);
+        return cmd;
+      });
+    }
+  };
+
+  return command;
 }
 
 export async function runCommand(
@@ -60,7 +90,9 @@ export async function runCommand(
   };
 
   const getMembers = async () => {
-    return (await getGuildMembers()).map((g) => new GuildMember(g));
+    return new Collection(
+      (await getGuildMembers()).map((m, id) => [id, new GuildMember(m)]),
+    );
   };
 
   const params: CommandParams = {
