@@ -33,6 +33,35 @@ export interface CommandParams {
   getMembers(): Promise<GuildMember[]>;
 }
 
+export function fuse(
+  subcommands: Record<string, Subcommand>,
+  build: (builder: SlashCommandBuilder) => void,
+) {
+  const command: Command = ({ options, ...other }) => {
+    const subcommandInfo = options.getSubcommandInfo();
+    // TODO: Technically this relies on command fns having the same name as their commands.
+    const subcommand = subcommands[subcommandInfo.name];
+
+    return subcommand({
+      options: subcommandInfo.options,
+      ...other,
+    });
+  };
+
+  command.build = (cmd) => {
+    build(cmd);
+
+    for (const subcommand of Object.values(subcommands)) {
+      cmd.addSubcommand((cmd) => {
+        subcommand.build(cmd);
+        return cmd;
+      });
+    }
+  };
+
+  return command;
+}
+
 export async function runCommand(
   interaction: Discord.APIChatInputApplicationCommandInteraction,
 ): Promise<Discord.APIInteractionResponse> {
