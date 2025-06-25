@@ -27,6 +27,6 @@ export function usageError<P extends unknown[]>(
     new UsageError(FRIEND, code, ephemeral, (embed, commandName) => {
       embed
         .into(f, ...params)
-        .setFooter({ text: `Error Code: ${commandName}.${code}` });
+        .setFooterText(`Error Code: ${commandName}.${code}`);
     });
 }
