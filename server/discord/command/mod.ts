@@ -7,7 +7,7 @@ import {
   SlashCommandSubcommandBuilder,
 } from "@discordjs/builders";
 import * as Discord from "discord-api-types";
-import { EmbedBuilderV2 } from "../embed.ts";
+import { EmbedBuilder2 } from "../embed.ts";
 import { GuildMember } from "../member.ts";
 import { getGuildMembers } from "../rest.ts";
 import { UsageError } from "./error.ts";
@@ -25,7 +25,7 @@ export interface Subcommand extends CommandFn {
 }
 
 export interface CommandParams {
-  embed: EmbedBuilderV2;
+  embed: EmbedBuilder2;
   author: GuildMember;
   options: CommandOptions;
   interaction: Discord.APIChatInputApplicationCommandInteraction;
@@ -46,7 +46,7 @@ export async function runCommand(
     message: "no member in payload",
   });
 
-  const embed = new EmbedBuilderV2();
+  const embed = new EmbedBuilder2();
   const author = new GuildMember(authorData);
   const options = new CommandOptions(
     interaction.data.options ?? [],
@@ -89,7 +89,7 @@ export async function runCommand(
         `Command '${cell.data.name}' got error ${error.code} when used by ${author.displayName}`,
       );
 
-      const embed = EmbedBuilderV2.into(error, cell.data.name);
+      const embed = EmbedBuilder2.into(error, cell.data.name);
       const { ephemeral } = error;
 
       data = {
@@ -102,7 +102,7 @@ export async function runCommand(
         error,
       );
 
-      const embed = new EmbedBuilderV2()
+      const embed = new EmbedBuilder2()
         .setTitle("Error! Porygon crashed.")
         .setDescription(
           `An error was thrown while executing the \`${cell.data.name}\` command.`,

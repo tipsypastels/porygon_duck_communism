@@ -6,14 +6,14 @@ export type IntoEmbed<P extends unknown[] = []> =
   | IntoEmbedObj<P>;
 
 export interface IntoEmbedFn<P extends unknown[] = []> {
-  (embed: EmbedBuilderV2, ...params: P): void;
+  (embed: EmbedBuilder2, ...params: P): void;
 }
 
 export interface IntoEmbedObj<P extends unknown[] = []> {
   intoEmbed: IntoEmbedFn<P>;
 }
 
-export class EmbedBuilderV2 extends EmbedBuilder {
+export class EmbedBuilder2 extends EmbedBuilder {
   static into<P extends unknown[] = []>(into: IntoEmbed<P>, ...params: P) {
     return new this().into(into, ...params);
   }
